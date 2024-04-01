@@ -9,18 +9,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchUserInfo(username) {
-  const accessToken = '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';
-
-  fetch(`https://api.github.com/users/${username}`, {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/vnd.github+json'
-    }
-  })
-    .then(response => response.json())
-    .then(data => displayUserInfo(data))
-    .catch(error => console.error('Fetching error:', error));
+  fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.github.com/users/${username}`)}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Failed to fetch user information');
+      }
+    })
+    .then(data => {
+      const userInfo = JSON.parse(data.contents);
+      displayUserInfo(userInfo);
+    })
+    .catch(error => {
+      console.error('Fetching error:', error);
+      displayError(error.message);
+    });
 }
+
 function displayUserInfo(user) {
   const container = document.getElementById('user-info');
   container.innerHTML = ''; // Clear previous results
@@ -28,15 +34,26 @@ function displayUserInfo(user) {
   const element = document.createElement('div');
   element.className = 'user-info-item';
   element.innerHTML = `
-    <img src="${user.avatar_url}" alt="User Avatar" width="100">
-    <h2>${user.name}</h2>
-    <p>Username: ${user.login}</p>
+    <img src="${user.avatar_url || ''}" alt="User Avatar" width="100">
+    <h2>${user.name || 'N/A'}</h2>
+    <p>Username: ${user.login || 'N/A'}</p>
     <p>Bio: ${user.bio || 'N/A'}</p>
     <p>Location: ${user.location || 'N/A'}</p>
-    <p>Repositories: ${user.public_repos}</p>
-    <p>Followers: ${user.followers}</p>
-    <p>Following: ${user.following}</p>
+    <p>Repositories: ${user.public_repos || 'N/A'}</p>
+    <p>Followers: ${user.followers || 'N/A'}</p>
+    <p>Following: ${user.following || 'N/A'}</p>
   `;
+
+  container.appendChild(element);
+}
+
+function displayError(message) {
+  const container = document.getElementById('user-info');
+  container.innerHTML = ''; // Clear previous results
+
+  const element = document.createElement('div');
+  element.className = 'error-message';
+  element.textContent = message;
 
   container.appendChild(element);
 }
