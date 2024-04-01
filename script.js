@@ -1,25 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('https://cors-anywhere.herokuapp.com/https://tradestie.com/api/v1/apps/reddit', {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => displayData(data))
-    .catch(error => console.error('Fetching error:', error));
+  const fetchBtn = document.getElementById('fetchBtn');
+  const usernameInput = document.getElementById('username');
+
+  fetchBtn.addEventListener('click', function() {
+    const username = usernameInput.value;
+    fetchUserInfo(username);
+  });
 });
 
-function displayData(data) {
-    const container = document.getElementById('api-data');
-    data.forEach(item => {
-        const element = document.createElement('div');
-        element.className = 'api-data-item';
-        element.innerHTML = `
-            <strong>Ticker:</strong> ${item.ticker} <br>
-            <strong>Sentiment:</strong> <span class="${item.sentiment.toLowerCase()}">${item.sentiment}</span> <br>
-            <strong>Sentiment Score:</strong> ${item.sentiment_score} <br>
-            <strong>Number of Comments:</strong> ${item.no_of_comments}
-        `;
-        container.appendChild(element);
-    });
+function fetchUserInfo(username) {
+  fetch(`https://api.github.com/users/${username}`)
+    .then(response => response.json())
+    .then(data => displayUserInfo(data))
+    .catch(error => console.error('Fetching error:', error));
+}
+
+function displayUserInfo(user) {
+  const container = document.getElementById('user-info');
+  container.innerHTML = ''; // Clear previous results
+
+  const element = document.createElement('div');
+  element.className = 'user-info-item';
+  element.innerHTML = `
+    <img src="${user.avatar_url}" alt="User Avatar" width="100">
+    <h2>${user.name}</h2>
+    <p>Username: ${user.login}</p>
+    <p>Bio: ${user.bio || 'N/A'}</p>
+    <p>Location: ${user.location || 'N/A'}</p>
+    <p>Repositories: ${user.public_repos}</p>
+    <p>Followers: ${user.followers}</p>
+    <p>Following: ${user.following}</p>
+  `;
+
+  container.appendChild(element);
 }
