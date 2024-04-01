@@ -9,17 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchUserInfo(username) {
-  fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.github.com/users/${username}`)}`)
+  fetch(`https://api.github.com/users/${username}`)
     .then(response => {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error('Failed to fetch user information');
+        throw new Error('User not found');
       }
     })
     .then(data => {
-      const userInfo = JSON.parse(data.contents);
-      displayUserInfo(userInfo);
+      displayUserInfo(data);
     })
     .catch(error => {
       console.error('Fetching error:', error);
@@ -34,14 +33,14 @@ function displayUserInfo(user) {
   const element = document.createElement('div');
   element.className = 'user-info-item';
   element.innerHTML = `
-    <img src="${user.avatar_url || ''}" alt="User Avatar" width="100">
-    <h2>${user.name || 'N/A'}</h2>
-    <p>Username: ${user.login || 'N/A'}</p>
+    <img src="${user.avatar_url}" alt="User Avatar" width="100">
+    <h2>${user.name || user.login}</h2>
+    <p>Username: ${user.login}</p>
     <p>Bio: ${user.bio || 'N/A'}</p>
     <p>Location: ${user.location || 'N/A'}</p>
-    <p>Repositories: ${user.public_repos || 'N/A'}</p>
-    <p>Followers: ${user.followers || 'N/A'}</p>
-    <p>Following: ${user.following || 'N/A'}</p>
+    <p>Repositories: ${user.public_repos}</p>
+    <p>Followers: ${user.followers}</p>
+    <p>Following: ${user.following}</p>
   `;
 
   container.appendChild(element);
