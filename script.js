@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('https://tradestie.com/api/v1/apps/reddit')
-        .then(response => response.json())
-        .then(data => displayData(data))
-        .catch(error => console.error('Fetching error:', error));
+    fetch('https://cors-anywhere.herokuapp.com/https://tradestie.com/api/v1/apps/reddit', {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => displayData(data))
+    .catch(error => console.error('Fetching error:', error));
 });
 
 function displayData(data) {
