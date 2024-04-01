@@ -9,12 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchUserInfo(username) {
-  fetch(`https://api.github.com/users/${username}`)
+  const accessToken = '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';
+
+  fetch(`https://api.github.com/users/${username}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/vnd.github+json'
+    }
+  })
     .then(response => response.json())
     .then(data => displayUserInfo(data))
     .catch(error => console.error('Fetching error:', error));
 }
-
 function displayUserInfo(user) {
   const container = document.getElementById('user-info');
   container.innerHTML = ''; // Clear previous results
